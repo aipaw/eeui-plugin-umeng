@@ -1,9 +1,10 @@
 const fs = require('fs');
 const file = require('./file');
+const dirCut = /^win/.test(process.platform) ? "\\" : "/";
 
 let workPath = process.cwd();
-let androidPath = workPath + '/platforms/android/eeuiApp';
-let gradPath = androidPath + '/build.gradle';
+let androidPath = workPath + dirCut + 'platforms' + dirCut + 'android' + dirCut + 'eeuiApp';
+let gradPath = androidPath + dirCut + 'build.gradle';
 let result = fs.readFileSync(gradPath, 'utf8');
 let values = result.split('\n');
 
@@ -17,15 +18,15 @@ for (let i = 0; i < values.length; i++) {
     }
 }
 
-let to = androidPath + '/app/src/main/res/drawable';
+let to = androidPath + dirCut + 'app' + dirCut + 'src' + dirCut + 'main' + dirCut + 'res' + dirCut + 'drawable';
 file.mkdirsSync(to);
 
 function _copyFile() {
     ['xhdpi', 'xxhdpi', 'xxxhdpi', 'hdpi', 'mdpi'].some((dName) => {
-        let dPath = androidPath + '/app/src/main/res/mipmap-' + dName + '/ic_launcher.png';
+        let dPath = androidPath + dirCut + 'app' + dirCut + 'src' + dirCut + 'main' + dirCut + 'res' + dirCut + 'mipmap-' + dName + dirCut + 'ic_launcher.png';
         if (fs.existsSync(dPath)) {
-            fs.copyFileSync(dPath, to + '/umeng_push_notification_default_large_icon.png');
-            fs.copyFileSync(dPath, to + '/umeng_push_notification_default_small_icon.png');
+            fs.copyFileSync(dPath, to + dirCut + 'umeng_push_notification_default_large_icon.png');
+            fs.copyFileSync(dPath, to + dirCut + 'umeng_push_notification_default_small_icon.png');
             return true;
         }
     });
