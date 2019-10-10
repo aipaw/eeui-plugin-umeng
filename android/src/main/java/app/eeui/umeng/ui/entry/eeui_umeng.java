@@ -85,6 +85,7 @@ public class eeui_umeng {
         eeui.getApplication().registerActivityLifecycleCallbacks(mCallbacks);
         //注册推送
         PushAgent mPushAgent = PushAgent.getInstance(eeui.getApplication());
+        mPushAgent.setResourcePackageName(BuildConfig.LIBRARY_PACKAGE_NAME);
         mPushAgent.register(new IUmengRegisterCallback() {
             @Override
             public void onSuccess(String deviceToken) {
