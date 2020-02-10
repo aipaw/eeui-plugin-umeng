@@ -56,7 +56,7 @@ public class eeui_umeng {
         if (!isRegister) {
             isRegister = true;
             try {
-                WXSDKEngine.registerModule("umeng", eeuiUmengModule.class);
+                WXSDKEngine.registerModule("eeuiUmeng", eeuiUmengModule.class);
             } catch (WXException e) {
                 e.printStackTrace();
             }

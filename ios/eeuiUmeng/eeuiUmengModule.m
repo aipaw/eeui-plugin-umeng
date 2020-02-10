@@ -13,7 +13,7 @@
 
 @implementation eeuiUmengModule
 
-WX_PlUGIN_EXPORT_MODULE(umeng, eeuiUmengModule)
+WX_PlUGIN_EXPORT_MODULE(eeuiUmeng, eeuiUmengModule)
 WX_EXPORT_METHOD_SYNC(@selector(getToken))
 WX_EXPORT_METHOD(@selector(setNotificationClickHandler:))
 WX_EXPORT_METHOD(@selector(onEvent:attributes:))
