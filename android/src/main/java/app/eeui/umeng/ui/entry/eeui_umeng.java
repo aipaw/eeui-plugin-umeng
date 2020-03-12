@@ -85,7 +85,7 @@ public class eeui_umeng {
         eeui.getApplication().registerActivityLifecycleCallbacks(mCallbacks);
         //注册推送
         PushAgent mPushAgent = PushAgent.getInstance(eeui.getApplication());
-        mPushAgent.setResourcePackageName(BuildConfig.LIBRARY_PACKAGE_NAME);
+        mPushAgent.setResourcePackageName(eeui.getApplication().getPackageName());
         mPushAgent.register(new IUmengRegisterCallback() {
             @Override
             public void onSuccess(String deviceToken) {
@@ -123,6 +123,7 @@ public class eeui_umeng {
     }
 
     public static void addNotificationClickHandler(Context context, JSCallback callback) {
+        mNotificationClickHandler = new ArrayList<>();
         mNotificationClickHandler.add(new notificationClickHandlerBean(context, callback));
     }
 
