@@ -34,9 +34,12 @@ function _mkdirsSync(dirname)  {
 function _copyFile() {
     ['xhdpi', 'xxhdpi', 'xxxhdpi', 'hdpi', 'mdpi'].some((dName) => {
         let dPath = path.resolve(androidPath, 'app/src/main/res/mipmap-' + dName + '/ic_launcher.png');
+        let tPath;
         if (fs.existsSync(dPath)) {
-            fs.copyFileSync(dPath, path.resolve(to, 'umeng_push_notification_default_large_icon.png'));
-            fs.copyFileSync(dPath, path.resolve(to, 'umeng_push_notification_default_small_icon.png'));
+            tPath = path.resolve(to, 'umeng_push_notification_default_large_icon.png');
+            !fs.existsSync(tPath) && fs.copyFileSync(dPath, tPath);
+            tPath = path.resolve(to, 'umeng_push_notification_default_small_icon.png');
+            !fs.existsSync(tPath) && fs.copyFileSync(dPath, tPath);
             return true;
         }
     });

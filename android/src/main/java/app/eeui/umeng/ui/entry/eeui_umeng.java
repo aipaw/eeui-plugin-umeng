@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import app.eeui.framework.BuildConfig;
+import app.eeui.framework.activity.PageActivity;
 import app.eeui.framework.extend.annotation.ModuleEntry;
+import app.eeui.framework.extend.bean.PageStatus;
 import app.eeui.framework.extend.module.eeuiBase;
 import app.eeui.framework.extend.module.eeuiCommon;
 import app.eeui.framework.extend.module.eeuiJson;
@@ -92,6 +94,16 @@ public class eeui_umeng {
                 umeng_token.put("status", "success");
                 umeng_token.put("msg", "");
                 umeng_token.put("token", deviceToken);
+                //
+                JSONObject object = new JSONObject();
+                object.put("messageType", "umengToken");
+                object.put("token", deviceToken);
+                LinkedList<Activity> activityList = eeui.getActivityList();
+                for (Activity mContext : activityList) {
+                    if (mContext instanceof PageActivity) {
+                        ((PageActivity) mContext).onAppStatusListener(new PageStatus("page", "message", null, object));
+                    }
+                }
             }
 
             @Override
@@ -142,6 +154,29 @@ public class eeui_umeng {
     }
 
     private static void clickHandleMessage(UMessage uMessage) throws JSONException {
+        Map<String, Object> temp = eeuiMap.jsonToMap(uMessage.getRaw());
+        Map<String, Object> body = eeuiMap.objectToMap(temp.get("body"));
+        Map<String, Object> extra = eeuiMap.objectToMap(temp.get("extra"));
+        if (body == null) {
+            return;
+        }
+        JSONObject object = new JSONObject();
+        object.put("messageType", "notificationClick");
+        object.put("status", "click");
+        object.put("msgid", eeuiParse.parseStr(body.get("msg_id")));
+        object.put("title", eeuiParse.parseStr(body.get("title")));
+        object.put("subtitle", "");
+        object.put("text", eeuiParse.parseStr(body.get("text")));
+        object.put("extra", extra != null ? extra : new HashMap<>());
+        object.put("rawData", temp);
+        //
+        LinkedList<Activity> activityList = eeui.getActivityList();
+        for (Activity mContext : activityList) {
+            if (mContext instanceof PageActivity) {
+                ((PageActivity) mContext).onAppStatusListener(new PageStatus("page", "message", null, object));
+            }
+        }
+        //
         mNotificationClickHandler = eeuiCommon.removeNull(mNotificationClickHandler);
         if (mNotificationClickHandler.size() == 0) {
             return;
@@ -153,21 +188,8 @@ public class eeui_umeng {
                 boolean isCallBack = false;
                 for (int j = 0; j < mLinkedList.size(); j++) {
                     if (mLinkedList.get(j).equals(mBean.context)) {
-                        Map<String, Object> temp = eeuiMap.jsonToMap(uMessage.getRaw());
-                        Map<String, Object> body = eeuiMap.objectToMap(temp.get("body"));
-                        Map<String, Object> extra = eeuiMap.objectToMap(temp.get("extra"));
-                        if (body != null) {
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("status", "click");
-                            data.put("msgid", eeuiParse.parseStr(body.get("msg_id")));
-                            data.put("title", eeuiParse.parseStr(body.get("title")));
-                            data.put("subtitle", "");
-                            data.put("text", eeuiParse.parseStr(body.get("text")));
-                            data.put("extra", extra != null ? extra : new HashMap<>());
-                            data.put("rawData", temp);
-                            mBean.callback.invokeAndKeepAlive(data);
-                            isCallBack = true;
-                        }
+                        mBean.callback.invokeAndKeepAlive(object);
+                        isCallBack = true;
                         break;
                     }
                 }

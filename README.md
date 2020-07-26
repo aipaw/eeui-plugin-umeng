@@ -20,21 +20,64 @@ const umeng = app.requireModule("eeui/umeng");
 
 ## 参数配置
 
-请查阅[配置相关](https://eeui.app/guide/config.html)
+[eeui.config.js](https://eeui.app/guide/config.html) 配置如下：
+```js
+module.exports = {
+    //......
+    "umeng": {
+        "ios": {
+            "enabled": true,
+            "appKey": "5f1ab6bad62dd10bc71bed5a",
+            "channel": "wook"
+        },
+        "android": {
+            "enabled": true,
+            "appKey": "5f1ab3ec6cab60339c37c67b",
+            "messageSecret": "274ef1c5897d4db4ea963820a5635622",
+            "channel": "wook"
+        }
+    },
+    //......
+}
+```
 
-## 获取token
-
-> `umeng.getToken` 获取友盟token
+## 调用方法 
 
 ```
 /**
+* 获取token
 * @返回 {"status":"success", "msg":"", "token":"友盟token"}
  */
 let variable = umeng.getToken()
 
 ```
 
+## 推送消息
+
+* 支持2.3.9+
+
+```html
+<template>
+    ...
+</template>
+
+<script>
+    export default {
+        pageMessage: function (data) {
+            let msg = data.message;
+            if (msg.messageType == 'umengToken') {
+                console.log('获取到友盟token：', msg.token);  //建议使用调用方法获取
+            } else if (msg.messageType == 'notificationClick') {
+                console.log('点击了通知栏消息：', msg);
+            }
+        }
+    }
+</script>
+```
+
 ## 点击通知事件
+
+* **支持：2.3.9版本之前**
 
 > `umeng.setNotificationClickHandler` 自定义通知打开动作（点击通知事件）
 

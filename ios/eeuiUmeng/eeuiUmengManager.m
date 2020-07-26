@@ -8,6 +8,7 @@
 //
 
 #import "eeuiUmengManager.h"
+#import "eeuiNewPageManager.h"
 #import <UMCommon/UMCommon.h>
 #import <UMAnalytics/MobClick.h>
 #import <UMCommonLog/UMCommonLogHeaders.h>
@@ -77,25 +78,28 @@
     [_msgidLists setObject:msgid forKey:msgid];
     //
     NSDictionary *alert = data[@"aps"][@"alert"];
-    if ([alert isKindOfClass:[NSDictionary class]]) {
-        NSMutableDictionary *extra = [[NSMutableDictionary alloc] init];
-        for (NSString * key in data) {
-            if (![key isEqualToString:@"aps"] &&
+    if (![alert isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
+    NSMutableDictionary *extra = [[NSMutableDictionary alloc] init];
+    for (NSString * key in data) {
+        if (![key isEqualToString:@"aps"] &&
                 ![key isEqualToString:@"d"] &&
                 ![key isEqualToString:@"p"]) {
-                [extra setObject:data[key] forKey:key];
-            }
+            [extra setObject:data[key] forKey:key];
         }
-        NSDictionary *result = @{@"status":@"click",
-                                 @"msgid":msgid,
-                                 @"title":alert[@"title"]?alert[@"title"]:@"",
-                                 @"subtitle":alert[@"subtitle"]?alert[@"subtitle"]:@"",
-                                 @"text":alert[@"body"]?alert[@"body"]:@"",
-                                 @"extra":extra,
-                                 @"rawData":data};
-        self.callback(result, YES);
     }
-
+    NSDictionary *result = @{
+            @"messageType": @"notificationClick",
+            @"status": @"click",
+            @"msgid": msgid,
+            @"title": alert[@"title"] ? alert[@"title"] : @"",
+            @"subtitle": alert[@"subtitle"] ? alert[@"subtitle"] : @"",
+            @"text": alert[@"body"] ? alert[@"body"] : @"",
+            @"extra": extra,
+            @"rawData": data};
+    [[eeuiNewPageManager sharedIntstance] postMessage:result];
+    self.callback(result, YES);
 }
 
 @end

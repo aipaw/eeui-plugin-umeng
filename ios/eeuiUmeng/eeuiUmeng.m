@@ -9,6 +9,7 @@
 #import "WeexInitManager.h"
 #import "eeuiUmengManager.h"
 #import "Config.h"
+#import "eeuiNewPageManager.h"
 
 WEEX_PLUGIN_INIT(eeuiUmeng)
 @implementation eeuiUmeng
@@ -43,6 +44,7 @@ WEEX_PLUGIN_INIT(eeuiUmeng)
                        stringByReplacingOccurrencesOfString: @" " withString:@""
                        ];
     [eeuiUmengManager sharedIntstance].token = @{@"status":@"success", @"msg": @"", @"token": token};
+    [[eeuiNewPageManager sharedIntstance] postMessage:@{@"messageType": @"umengToken", @"token": token}];
 }
 
 //注册失败
