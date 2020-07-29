@@ -30,13 +30,15 @@ import org.json.JSONException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import app.eeui.framework.BuildConfig;
+import app.eeui.framework.activity.PageActivity;
 import app.eeui.framework.extend.annotation.ModuleEntry;
+import app.eeui.framework.extend.bean.PageStatus;
 import app.eeui.framework.extend.module.eeuiBase;
 import app.eeui.framework.extend.module.eeuiJson;
 import app.eeui.framework.extend.module.eeuiMap;
-import app.eeui.framework.extend.module.eeuiPage;
 import app.eeui.framework.extend.module.eeuiParse;
 import app.eeui.framework.ui.eeui;
 import app.eeui.umeng.ui.module.eeuiUmengAnalyticsModule;
@@ -93,7 +95,7 @@ public class eeuiUmengEntry {
                 JSONObject object = new JSONObject();
                 object.put("messageType", "umengToken");
                 object.put("token", deviceToken);
-                eeuiPage.postMessage(object);
+                postMessage(object);
             }
 
             @Override
@@ -111,10 +113,18 @@ public class eeuiUmengEntry {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                LinkedList<Activity> mLinkedList = eeui.getActivityList();
-                Activity mActivity = mLinkedList.getLast();
+                Activity mActivity = null;
+                Intent intent;
+                try {
+                    LinkedList<Activity> mLinkedList = eeui.getActivityList();
+                    mActivity = mLinkedList.getLast();
+                } catch (NoSuchElementException ignored) { }
                 if (mActivity != null) {
-                    Intent intent = new Intent(context, mActivity.getClass());
+                    intent = new Intent(context, mActivity.getClass());
+                } else {
+                    intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+                }
+                if (intent != null) {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
@@ -174,7 +184,16 @@ public class eeuiUmengEntry {
         object.put("text", eeuiParse.parseStr(body.get("text")));
         object.put("extra", extra != null ? extra : new HashMap<>());
         object.put("rawData", temp);
-        eeuiPage.postMessage(object);
+        postMessage(object);
+    }
+
+    public void postMessage(Object message) {
+        LinkedList<Activity> activityList = eeui.getActivityList();
+        for (Activity mContext : activityList) {
+            if (mContext instanceof PageActivity) {
+                ((PageActivity) mContext).onAppStatusListener(new PageStatus("page", "message", null, message));
+            }
+        }
     }
 
     private static ActivityLifecycleCallbacks mCallbacks = new ActivityLifecycleCallbacks() {
