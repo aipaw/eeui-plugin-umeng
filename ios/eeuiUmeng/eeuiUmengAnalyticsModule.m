@@ -3,7 +3,7 @@
 //
 
 #import "eeuiUmengAnalyticsModule.h"
-#import <UMAnalytics/MobClick.h>
+#import <UMCommon/MobClick.h>
 #import <WeexPluginLoader/WeexPluginLoader.h>
 
 @implementation eeuiUmengAnalyticsModule

@@ -25,7 +25,6 @@ Pod::Spec.new do |s|
   s.dependency 'WeexPluginLoader', '~> 0.0.1.9.1'
   s.dependency 'UMCCommon'
   s.dependency 'UMCSecurityPlugins'
-  s.dependency 'UMCAnalytics'
   s.dependency 'UMCPush'
   s.dependency 'UMCCommonLog'
 
