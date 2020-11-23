@@ -5,7 +5,7 @@
 #import "eeuiUmengManager.h"
 #import "eeuiNewPageManager.h"
 #import <UMCommon/UMCommon.h>
-#import <UMAnalytics/MobClick.h>
+#import <UMCommon/MobClick.h>
 #import <UMCommonLog/UMCommonLogHeaders.h>
 
 @implementation eeuiUmengManager
@@ -28,7 +28,6 @@
     #if DEBUG
     [UMConfigure setLogEnabled:YES];
     #endif
-    [MobClick setScenarioType:E_UM_NORMAL];
 
 
     [UMConfigure initWithAppkey:key channel:channel];
